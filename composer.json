@@ -1,0 +1,23 @@
+{
+    "name": "yourimageshare/yourimageshare-php",
+    "description": "Official PHP SDK for the YourImageShare upload API (https://yourimageshare.com/about/api).",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["yourimageshare", "image hosting", "video hosting", "screenshot", "upload", "sdk", "api"],
+    "homepage": "https://yourimageshare.com/about/api",
+    "support": {
+        "issues": "https://github.com/MediaShareORG/yourimageshare-php/issues",
+        "source": "https://github.com/MediaShareORG/yourimageshare-php"
+    },
+    "require": {
+        "php": ">=7.4",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "YourImageShare\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
