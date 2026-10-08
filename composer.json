@@ -6,8 +6,8 @@
     "keywords": ["yourimageshare", "image hosting", "video hosting", "screenshot", "upload", "sdk", "api"],
     "homepage": "https://yourimageshare.com/about/api",
     "support": {
-        "issues": "https://github.com/MediaShareORG/yourimageshare-php/issues",
-        "source": "https://github.com/MediaShareORG/yourimageshare-php"
+        "issues": "https://github.com/yourimageshare/yourimageshare-php/issues",
+        "source": "https://github.com/yourimageshare/yourimageshare-php"
     },
     "require": {
         "php": ">=7.4",

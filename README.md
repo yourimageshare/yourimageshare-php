@@ -10,7 +10,7 @@ PHP 7.4+.
 - **Get an API key:** sign in and open the **API** tab at
   [yourimageshare.com/my-account](https://yourimageshare.com/my-account).
 - **Full HTTP reference:** [yourimageshare.com/about/api](https://yourimageshare.com/about/api)
-  or [API.md in the yourimageshare-api repo](https://github.com/MediaShareORG/yourimageshare/blob/main/API.md).
+  or [API.md in the yourimageshare-api repo](https://github.com/yourimageshare/yourimageshare/blob/main/API.md).
 - Same API, same result shapes, in [JavaScript/TypeScript](https://www.npmjs.com/package/yourimageshare) and [Python](https://pypi.org/project/yourimageshare/) too.
 
 ## Install
@@ -45,6 +45,23 @@ foreach ($listing->data as $item) {
 
 // Delete an upload
 $client->delete($result->id);
+```
+
+### Large files, duplicates, links and thumbnails
+
+Files up to 200 MB are supported. Anything over 90 MB is sent in 5 MB pieces automatically (one request can carry at most 100 MB). If your account already uploaded the exact same file, the existing upload is returned with `duplicate` set - opt out with the allow-duplicate option. Results also carry `thumb` (a 280 px WebP thumbnail), `width`, `height`, `size` and `locked`. Store `src`, not `path`: `path` can change shortly after upload when the file is converted (WebP/MP4).
+
+```php
+$result = $client->upload('video.mp4', [
+    'on_progress' => function (int $sent, int $total) { echo intdiv($sent * 100, $total), "%\n"; },
+]);
+echo $result->src, ' ', $result->thumb, ' ', $result->width, ' ', $result->duplicate ? 'dup' : 'new';
+
+// a fresh copy even if this exact file is already on your account
+$client->upload('photo.jpg', ['allow_duplicate' => true]);
+
+// let the server download a public link (up to 200 MB)
+$client->uploadUrl('https://example.com/photo.jpg');
 ```
 
 ### Error handling
