@@ -51,10 +51,13 @@ final class YourImageShare
      * Options: `expires_in` (seconds, 60 to 2,592,000), `allow_duplicate`
      * (store a new copy even if your account already uploaded this exact
      * file - otherwise that upload is returned with `duplicate = true`),
-     * `on_progress` (callable(int $sent, int $total), called after each piece).
+     * `on_progress` (callable(int $sent, int $total), called after each piece),
+     * `visibility` ("unlisted" - the server default: file and page work for
+     * anyone with the link; "private" - file only, no page for others;
+     * "public" - listed), `title` (up to 90 characters), `description` (up to 500).
      *
      * @param resource|string $file
-     * @param array{filename?: string, expires_in?: int, allow_duplicate?: bool, on_progress?: callable} $options
+     * @param array{filename?: string, expires_in?: int, allow_duplicate?: bool, on_progress?: callable, visibility?: string, title?: string, description?: string} $options
      */
     public function upload($file, array $options = []): UploadResult
     {
@@ -103,7 +106,7 @@ final class YourImageShare
     /**
      * Upload from a public http(s) link: the server downloads the file itself (up to 200 MB).
      *
-     * @param array{expires_in?: int, allow_duplicate?: bool} $options
+     * @param array{expires_in?: int, allow_duplicate?: bool, visibility?: string, title?: string, description?: string} $options
      */
     public function uploadUrl(string $url, array $options = []): UploadResult
     {
@@ -121,6 +124,11 @@ final class YourImageShare
         }
         if (!empty($options['allow_duplicate'])) {
             $fields['allow_duplicate'] = '1';
+        }
+        foreach (['visibility', 'title', 'description'] as $key) {
+            if (isset($options[$key])) {
+                $fields[$key] = (string) $options[$key];
+            }
         }
         $body = $this->request('POST', $this->baseUrl, $fields, max($this->timeout, 180));
         return new UploadResult($body['data']);
@@ -182,6 +190,27 @@ final class YourImageShare
         return new ListResult($uploads, new ListMeta($body['meta']));
     }
 
+    /** One of your uploads (needs the full API key). */
+    public function get(string $id): ListedUpload
+    {
+        $body = $this->request('GET', $this->baseUrl . '/' . rawurlencode($id));
+        return new ListedUpload($body['data']);
+    }
+
+    /**
+     * Change the visibility ("private", "unlisted", "public"), title or description of one of your
+     * uploads (needs the full API key). Only the keys you pass change; an empty string clears a
+     * title/description.
+     *
+     * @param array{visibility?: string, title?: string, description?: string} $changes
+     */
+    public function update(string $id, array $changes): ListedUpload
+    {
+        $changes = array_intersect_key($changes, array_flip(['visibility', 'title', 'description']));
+        $body = $this->request('PATCH', $this->baseUrl . '/' . rawurlencode($id), null, null, json_encode($changes));
+        return new ListedUpload($body['data']);
+    }
+
     /** Delete one of your uploads by id. Throws on a 404/401. */
     public function delete(string $id): void
     {
@@ -192,7 +221,7 @@ final class YourImageShare
      * @param array<string, mixed>|null $postFields
      * @return array<string, mixed>
      */
-    private function request(string $method, string $url, ?array $postFields = null, ?int $timeout = null): array
+    private function request(string $method, string $url, ?array $postFields = null, ?int $timeout = null, ?string $jsonBody = null): array
     {
         $ch = curl_init();
         $headers = [
@@ -212,6 +241,10 @@ final class YourImageShare
             $options[CURLOPT_POSTFIELDS] = $postFields;
         } elseif ($method === 'DELETE') {
             $options[CURLOPT_CUSTOMREQUEST] = 'DELETE';
+        } elseif ($method === 'PATCH') {
+            $options[CURLOPT_CUSTOMREQUEST] = 'PATCH';
+            $options[CURLOPT_POSTFIELDS] = (string) $jsonBody;
+            $options[CURLOPT_HTTPHEADER][] = 'Content-Type: application/json';
         }
 
         curl_setopt_array($ch, $options);

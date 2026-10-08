@@ -25,6 +25,14 @@ final class UploadResult
     public $size;
     /** True if the upload is password-protected */
     public bool $locked;
+    /** "private" (file only), "unlisted" (page for anyone with the link) or "public" (listed) */
+    public string $visibility;
+    /** @var string|null */
+    public $description;
+    /** @var string|null */
+    public $title;
+    /** @var string|null New uploads only: a private link that deletes the upload without an API key (shown once) */
+    public $deleteUrl;
     /** @var string|null */
     public $expiresAt;
     /** True if your account had already uploaded this exact file and that upload was returned */
@@ -43,6 +51,10 @@ final class UploadResult
         $this->height = isset($data['height']) ? (int) $data['height'] : null;
         $this->size = isset($data['size']) ? (int) $data['size'] : null;
         $this->locked = ($data['locked'] ?? false) === true;
+        $this->visibility = (string) ($data['visibility'] ?? 'unlisted');
+        $this->description = $data['description'] ?? null;
+        $this->title = $data['title'] ?? null;
+        $this->deleteUrl = $data['delete_url'] ?? null;
         $this->expiresAt = $data['expires_at'] ?? null;
         $this->duplicate = ($data['duplicate'] ?? false) === true;
     }

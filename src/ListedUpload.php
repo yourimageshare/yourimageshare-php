@@ -24,6 +24,10 @@ final class ListedUpload
     public $size;
     /** True if the upload is password-protected */
     public bool $locked;
+    /** "private" (file only), "unlisted" (page for anyone with the link) or "public" (listed) */
+    public string $visibility;
+    /** @var string|null */
+    public $description;
     /** @var string|null */
     public $expiresAt;
     public string $createdAt;
@@ -42,6 +46,8 @@ final class ListedUpload
         $this->height = isset($data['height']) ? (int) $data['height'] : null;
         $this->size = isset($data['size']) ? (int) $data['size'] : null;
         $this->locked = ($data['locked'] ?? false) === true;
+        $this->visibility = (string) ($data['visibility'] ?? 'unlisted');
+        $this->description = $data['description'] ?? null;
         $this->expiresAt = $data['expires_at'] ?? null;
         $this->createdAt = (string) $data['created_at'];
     }
