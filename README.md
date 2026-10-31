@@ -3,7 +3,7 @@
 [![Packagist version](https://img.shields.io/packagist/v/yourimageshare/yourimageshare-php.svg)](https://packagist.org/packages/yourimageshare/yourimageshare-php)
 [![license](https://img.shields.io/packagist/l/yourimageshare/yourimageshare-php.svg)](LICENSE)
 
-<p align="center"><a href="https://yourimageshare.com/ib/TUj7lWWWq7"><img src="https://yourimageshare.com/ib/TUj7lWWWq7.png" alt="YourImageShare PHP SDK: upload a photo in 3 lines and get a link" width="760"></a></p>
+<p align="center"><a href="https://yourimageshare.com/"><img src="https://yourimageshare.com/ib/TUj7lWWWq7.png" alt="YourImageShare PHP SDK: upload a photo in 3 lines and get a link" width="760"></a></p>
 
 Official PHP SDK for the [YourImageShare](https://yourimageshare.com)
 upload API. Zero Composer dependencies (uses PHP's own `curl` extension),
